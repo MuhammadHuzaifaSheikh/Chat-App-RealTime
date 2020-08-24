@@ -160,6 +160,9 @@ body,html{
     background-color: #82ccdd;
     padding: 18px;
     position: relative;
+    min-width: 178px;
+    max-width: 230px;
+    text-align: center;
 }
 .msg_cotainer_send{
     margin-top: auto;
@@ -169,7 +172,8 @@ body,html{
     background-color: #78e08f;
     padding: 18px;
     position: relative;
-    width: 178px;
+    min-width: 178px;
+    max-width: 230px;
     text-align: center;
 }
 .msg_time{
@@ -235,20 +239,14 @@ body,html{
     background-color: rgba(0,0,0,0.2);
 }
 @media(max-width: 1080px){
-    .contacts_card{
-        margin-bottom: 15px !important;
-        height: 100vh;
-    }
+
     .card{
         height: 100vh;
     }
 }
 @media(max-width: 768px){
-    .contacts_card{
-        margin-bottom: 15px !important;
-        height: 70vh;
-    }
+
     .card{
-        height: 30vh;
+        height: 100vh;
     }
 }
