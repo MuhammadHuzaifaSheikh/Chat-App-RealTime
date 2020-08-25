@@ -4,8 +4,8 @@ import SendIcon from '@material-ui/icons/Send';
 import io from 'socket.io-client';
 import audio from '../../sound/whatsapp_incoming.mp3'
 import './Chatt.css'
-
-const socket = io('http://localhost:4000');
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+const socket = io('https://chatapprealtimeio.herokuapp.com');
 
 class Chat extends Component {
   
@@ -14,10 +14,14 @@ class Chat extends Component {
     state = {
         message: '',
         Messages: [],
+        connectedNames:[]
     }
 
 
     componentDidMount() {
+        socket.on('users',users=>{
+            this.setState({connectedNames:users})
+        })
 
         socket.emit('new_user_joined', {name:this.props.name })
             socket.on('welcome', receiveMessage => {
@@ -41,8 +45,12 @@ class Chat extends Component {
 
     componentWillMount() {
 
+        socket.on('userDisconnect',users=>{
+            this.setState({connectedNames:users})
+        })
         socket.on('user_joined', receiveMessage => {
 
+            console.log(receiveMessage);
             let local = this.state.Messages
 
             let div =  <div style={{float:'left',clear:'both'}} className="d-flex justify-content-end mb-4">
@@ -143,8 +151,49 @@ class Chat extends Component {
         return (
             <div className="container-fluid h-100 ">
                 <div className="row justify-content-center h-100">
+                    <div className="col-md-4 col-xl-3 chat connected">
+                        <div className="card mb-sm-3 mb-md-0 contacts_card">
+                            <div className="card-header">
+                                <div className="input-group">
+                                        <div className="input-group-prepend text-white">
+                                            People currently chatting :
+                                        </div>
+                                </div>
+                            </div>
+                            <div className="card-body contacts_body">
+                                <ul className="contacts">
+
+                                    {this.state.connectedNames.map((item,index)=>{
+                                        return(
+                                            <li key={index} className="active">
+                                                <div className="d-flex bd-highlight">
+                                                    <div className="user_info">
+                                                        <span>{item} <FiberManualRecordIcon className='online_icon'/></span>
+                                                        <p>{item} is connected</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        )
+                                    })}
+
+                                </ul>
+                            </div>
+                            <div className="card-footer"> </div>
+                        </div>
+                    </div>
                     <div className="col-md-8 col-xl-6 chat">
                         <div className="card">
+                            <div className="card-header msg_head">
+                                <div className="d-flex bd-highlight">
+
+                                    <div className="user_info">
+                                        <span>{this.state.connectedNames.length} people are connected <FiberManualRecordIcon className='online_icon'/></span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
 
                             <div className="card-body msg_card_body">
 
@@ -154,7 +203,6 @@ class Chat extends Component {
 
 
                             </div>
-
 
 
 

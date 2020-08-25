@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+
+
 body,html{
     height: 100%;
     margin: 0;
@@ -10,6 +13,7 @@ body,html{
     margin-top: auto;
     margin-bottom: auto;
 }
+
 .card{
     height: 500px;
     border-radius: 15px !important;
@@ -86,11 +90,13 @@ body,html{
 .contacts{
     list-style: none;
     padding: 0;
+    text-transform: capitalize;
 }
 .contacts li{
     width: 100% !important;
     padding: 5px 10px;
     margin-bottom: 15px !important;
+
 }
 .active{
     background-color: rgba(0,0,0,0.3);
@@ -117,14 +123,11 @@ body,html{
     width: 40px;
 }
 .online_icon{
-    position: absolute;
-    height: 15px;
-    width:15px;
-    background-color: #4cd137;
+
+    height: 12px;
+    width:12px;
+    color: #4cd137;
     border-radius: 50%;
-    bottom: 0.2em;
-    right: 0.4em;
-    border:1.5px solid white;
 }
 .offline{
     background-color: #c23616 !important;
@@ -163,6 +166,7 @@ body,html{
     min-width: 178px;
     max-width: 230px;
     text-align: center;
+    font-family: 'Mulish', sans-serif;
 }
 .msg_cotainer_send{
     margin-top: auto;
@@ -175,6 +179,7 @@ body,html{
     min-width: 178px;
     max-width: 230px;
     text-align: center;
+    font-family: 'Mulish', sans-serif;
 }
 .msg_time{
     position: absolute;
@@ -189,6 +194,7 @@ body,html{
     top: 0;
     color: rgba(67, 65, 65, 0.5);
     font-size: 14px;
+    text-transform: capitalize;
 
 }
 .msg_time_send{
@@ -243,10 +249,18 @@ body,html{
     .card{
         height: 100vh;
     }
+    .connected{
+        display: inline-block;
+    }
 }
 @media(max-width: 768px){
 
     .card{
         height: 100vh;
+        margin: 0;
+
+    }
+    .connected{
+        display: none;
     }
 }
