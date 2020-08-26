@@ -11,11 +11,12 @@ import {
 } from "react-router-dom";
 function App() {
     const [name, setName] = useState('');
+    const [room, setRoom] = useState('');
 
 
-    function takeName(name) {
-        console.log(name);
+    function takeName(name,room) {
         setName(name)
+        setRoom(room)
     }
     return (
         <div>
@@ -23,11 +24,11 @@ function App() {
 
                     <Switch>
                         <Route  path="/chat" render={() => {
-                            return name ? <Chat name={name}/> : <Redirect to={'/'}/>
+                            return name&&room ? <Chat room={room} name={name}/> : <Redirect to={'/'}/>
                         }}>
                         </Route>
                         <Route exact path="/" render={() => {
-                            return name ?  <Redirect to={'/chat'}/> :<Join  onTakeName={takeName}/>
+                            return name&&room ?  <Redirect to={'/chat'}/> :<Join  onTakeName={takeName}/>
                         }}>
                         </Route>
 

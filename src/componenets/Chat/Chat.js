@@ -5,55 +5,60 @@ import io from 'socket.io-client';
 import audio from '../../sound/whatsapp_incoming.mp3'
 import './Chatt.css'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-const socket = io('https://chatapprealtimeio.herokuapp.com');
+
+const socket = io('http://localhost:4000');
 
 class Chat extends Component {
-  
 
-    myAudio=React.createRef()
+
+    myAudio = React.createRef()
     state = {
         message: '',
         Messages: [],
-        connectedNames:[]
+        connectedNames: [],
+        room:'',
     }
 
 
     componentDidMount() {
-        socket.on('users',users=>{
-            this.setState({connectedNames:users})
+        socket.on('users', users => {
+            console.log(users);
+            this.setState({connectedNames: users.usersName,room:users.rooms})
         })
+        socket.emit('join_room', this.props.room)
 
-        socket.emit('new_user_joined', {name:this.props.name })
-            socket.on('welcome', receiveMessage => {
 
-                let local = this.state.Messages
+        socket.emit('new_user_joined', {name: this.props.name, room: this.props.room})
+        socket.on('welcome', receiveMessage => {
 
-                let div = <div style={{float: 'left', clear: 'both'}} className="d-flex justify-content-end mb-4">
-                    <div className="msg_cotainer">
-                        <span className="name">{receiveMessage.name}</span>
-                        {receiveMessage.message}
-                        <span className="msg_time_send">{receiveMessage.time}</span>
-                    </div>
+            let local = this.state.Messages
 
+            let div = <div style={{float: 'left', clear: 'both'}} className="d-flex justify-content-end mb-4">
+                <div className="msg_cotainer">
+                    <span className="name">{receiveMessage.name}</span>
+                    {receiveMessage.message}
+                    <span className="msg_time_send">{receiveMessage.time}</span>
                 </div>
-                local.push(div)
-                this.audioPlay()
-                this.setState({Messages: local})
-            });
+
+            </div>
+            local.push(div)
+            this.audioPlay()
+            this.setState({Messages: local})
+        });
 
     }
 
     componentWillMount() {
 
-        socket.on('userDisconnect',users=>{
-            this.setState({connectedNames:users})
+        socket.on('userDisconnectName', users => {
+            this.setState({connectedNames: users.usersName})
         })
         socket.on('user_joined', receiveMessage => {
 
             console.log(receiveMessage);
             let local = this.state.Messages
 
-            let div =  <div style={{float:'left',clear:'both'}} className="d-flex justify-content-end mb-4">
+            let div = <div style={{float: 'left', clear: 'both'}} className="d-flex justify-content-end mb-4">
                 <div className="msg_cotainer">
                     <span className="name">{receiveMessage.name}</span>
                     {receiveMessage.message}
@@ -65,14 +70,12 @@ class Chat extends Component {
             this.audioPlay()
             this.setState({Messages: local})
         });
-
-
 
 
         socket.on('leave', receiveMessage => {
 
             let local = this.state.Messages
-            let div =  <div style={{float:'left',clear:'both'}} className="d-flex justify-content-end mb-4">
+            let div = <div style={{float: 'left', clear: 'both'}} className="d-flex justify-content-end mb-4">
                 <div className="msg_cotainer">
                     <span className="name">{receiveMessage.name}</span>
                     {receiveMessage.message}
@@ -86,11 +89,10 @@ class Chat extends Component {
         });
 
 
-
         socket.on('receiveMessage', receiveMessage => {
 
             let local = this.state.Messages
-            let div =  <div style={{float:'left',clear:'both'}} className="d-flex justify-content-end mb-4">
+            let div = <div style={{float: 'left', clear: 'both'}} className="d-flex justify-content-end mb-4">
                 <div className="msg_cotainer">
                     <span className="name">{receiveMessage.name}</span>
                     {receiveMessage.message}
@@ -114,13 +116,13 @@ class Chat extends Component {
         socket.emit('sendMessage', {
             message: this.state.message,
             time: new Date().toLocaleTimeString(),
-            name:this.props.name
+            name: this.props.name,
+            room: this.props.room
         })
 
 
-
         let local = this.state.Messages
-        let div =  <div  style={{float:'right',clear:'both'}} className="d-flex justify-content-end mb-4">
+        let div = <div style={{float: 'right', clear: 'both'}} className="d-flex justify-content-end mb-4">
             <div className="msg_cotainer_send">
                 <span className="name">{this.props.name}</span>
                 {this.state.message}
@@ -132,7 +134,7 @@ class Chat extends Component {
 
         this.setState({Messages: local})
 
-        this.setState({message:''})
+        this.setState({message: ''})
     }
 
     sendMessagesEnter = (e) => {
@@ -141,7 +143,7 @@ class Chat extends Component {
         }
     }
 
-    audioPlay=()=>{
+    audioPlay = () => {
         console.log(this.myAudio.current.play());
     }
 
@@ -155,20 +157,21 @@ class Chat extends Component {
                         <div className="card mb-sm-3 mb-md-0 contacts_card">
                             <div className="card-header">
                                 <div className="input-group">
-                                        <div className="input-group-prepend text-white">
-                                            People currently chatting :
-                                        </div>
+                                    <div className="input-group-prepend text-white">
+                                        People currently chatting :
+                                    </div>
                                 </div>
                             </div>
                             <div className="card-body contacts_body">
                                 <ul className="contacts">
 
-                                    {this.state.connectedNames.map((item,index)=>{
-                                        return(
+                                    {this.state.connectedNames.map((item, index) => {
+                                        return (
                                             <li key={index} className="active">
                                                 <div className="d-flex bd-highlight">
                                                     <div className="user_info">
-                                                        <span>{item} <FiberManualRecordIcon className='online_icon'/></span>
+                                                        <span>{item} <FiberManualRecordIcon
+                                                            className='online_icon'/></span>
                                                         <p>{item} is connected</p>
                                                     </div>
                                                 </div>
@@ -178,7 +181,7 @@ class Chat extends Component {
 
                                 </ul>
                             </div>
-                            <div className="card-footer"> </div>
+                            <div className="card-footer"></div>
                         </div>
                     </div>
                     <div className="col-md-8 col-xl-6 chat">
@@ -187,7 +190,8 @@ class Chat extends Component {
                                 <div className="d-flex bd-highlight">
 
                                     <div className="user_info">
-                                        <span>{this.state.connectedNames.length} people are connected <FiberManualRecordIcon className='online_icon'/></span>
+                                        <span>{this.state.connectedNames.length} people are connected <span className='room'>Room : {this.state.room}</span> <FiberManualRecordIcon
+                                            className='online_icon'/></span>
 
                                     </div>
 
@@ -197,13 +201,12 @@ class Chat extends Component {
 
                             <div className="card-body msg_card_body">
 
-                                {this.state.Messages.map((item,index)=>{
-                                    return     <div key={index}>{item}</div>
+                                {this.state.Messages.map((item, index) => {
+                                    return <div key={index}>{item}</div>
                                 })}
 
 
                             </div>
-
 
 
                             <div className="card-footer">
@@ -213,9 +216,9 @@ class Chat extends Component {
                                         className="fas fa-paperclip"> </i></span>
                                     </div>
                                     <input onKeyPress={this.sendMessagesEnter} value={this.state.message}
-                                              onChange={this.onValue} name=""
-                                              className="form-control type_msg"
-                                              placeholder="Type your message..."/>
+                                           onChange={this.onValue} name=""
+                                           className="form-control type_msg"
+                                           placeholder="Type your message..."/>
                                     <div className="input-group-append">
                                         <span onClick={this.sendMessages}
                                               className="input-group-text send_btn"><SendIcon/></span>
@@ -226,7 +229,7 @@ class Chat extends Component {
                     </div>
                 </div>
 
-                <audio ref={this.myAudio} id='audio' src={audio}> </audio>
+                <audio ref={this.myAudio} id='audio' src={audio}></audio>
 
             </div>
         )

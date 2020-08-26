@@ -5,20 +5,27 @@ import './join.css';
 
 export default function Join(props) {
     const [name, setName] = useState('');
+    const [room, setRoom] = useState('');
 
-    function handle(e) {
+    function handleName(e) {
         setName(e.target.value)
+
+    }
+
+    function handleRoom(e) {
+        setRoom(e.target.value)
 
     }
 
     function passName() {
 
-        if (name!=='') {
-         props.onTakeName(name)
+        if (name!==''&&room!=='') {
+         props.onTakeName(name,room)
             setName('')
+            setRoom('')
         }
         else {
-            alert('Please type your name for joined the chat')
+            alert('Please type your name and room for joined the chat')
         }
 
     }
@@ -30,7 +37,10 @@ export default function Join(props) {
             <div className="joinInnerContainer">
                 <h1 className="heading">Join</h1>
                 <div>
-                    <input value={name} placeholder="Name" className="joinInput" type="text" onChange={handle}  />
+                    <input value={name} placeholder="Name" className="joinInput" type="text" onChange={handleName}  />
+                </div>
+                <div>
+                    <input value={room} placeholder="Room" className="joinInput" type="text" onChange={handleRoom}  />
                 </div>
 
                     <button onClick={passName} className={'button mt-20'}>Sign In</button>

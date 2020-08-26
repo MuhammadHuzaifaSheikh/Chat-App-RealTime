@@ -13,11 +13,15 @@ body,html{
     margin-top: auto;
     margin-bottom: auto;
 }
-
+.room{
+   position: absolute;
+    right: 10px;
+}
 .card{
     height: 500px;
     border-radius: 15px !important;
     background-color: rgba(0,0,0,0.4) !important;
+
 }
 
 .contacts_body{
@@ -262,5 +266,9 @@ body,html{
     }
     .connected{
         display: none;
+    }
+    .room{
+        top: 40px;
+
     }
 }
