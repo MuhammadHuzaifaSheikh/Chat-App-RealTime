@@ -6,7 +6,7 @@ import audio from '../../sound/whatsapp_incoming.mp3'
 import './Chatt.css'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
-const socket = io('http://localhost:4000');
+const socket = io('https://chatapprealtimeio.herokuapp.com');
 
 class Chat extends Component {
 
@@ -21,13 +21,7 @@ class Chat extends Component {
 
 
     componentDidMount() {
-        socket.on('users', users => {
-            console.log(users);
-            this.setState({connectedNames: users.usersName,room:users.rooms})
-        })
         socket.emit('join_room', this.props.room)
-
-
         socket.emit('new_user_joined', {name: this.props.name, room: this.props.room})
         socket.on('welcome', receiveMessage => {
 
@@ -47,15 +41,12 @@ class Chat extends Component {
         });
 
     }
-
     componentWillMount() {
-
-        socket.on('userDisconnectName', users => {
-            this.setState({connectedNames: users.usersName})
+        socket.on('roomData', users => {
+                this.setState({connectedNames: users.users,room:users.room})
         })
         socket.on('user_joined', receiveMessage => {
 
-            console.log(receiveMessage);
             let local = this.state.Messages
 
             let div = <div style={{float: 'left', clear: 'both'}} className="d-flex justify-content-end mb-4">
@@ -70,8 +61,9 @@ class Chat extends Component {
             this.audioPlay()
             this.setState({Messages: local})
         });
-
-
+        socket.on('roomDataDisconnect', users => {
+            this.setState({connectedNames: users.users,room:users.room})
+        })
         socket.on('leave', receiveMessage => {
 
             let local = this.state.Messages
@@ -84,11 +76,11 @@ class Chat extends Component {
 
             </div>
             local.push(div)
+
+
             this.audioPlay()
             this.setState({Messages: local})
         });
-
-
         socket.on('receiveMessage', receiveMessage => {
 
             let local = this.state.Messages
@@ -111,16 +103,12 @@ class Chat extends Component {
         this.setState({message: e.target.value})
     }
     sendMessages = () => {
-
-
         socket.emit('sendMessage', {
             message: this.state.message,
             time: new Date().toLocaleTimeString(),
             name: this.props.name,
             room: this.props.room
         })
-
-
         let local = this.state.Messages
         let div = <div style={{float: 'right', clear: 'both'}} className="d-flex justify-content-end mb-4">
             <div className="msg_cotainer_send">
@@ -131,20 +119,16 @@ class Chat extends Component {
 
         </div>
         local.push(div)
-
         this.setState({Messages: local})
-
         this.setState({message: ''})
     }
-
     sendMessagesEnter = (e) => {
         if (e.key === 'Enter') {
             this.sendMessages()
         }
     }
-
     audioPlay = () => {
-        console.log(this.myAudio.current.play());
+      this.myAudio.current.play();
     }
 
     render() {
@@ -170,9 +154,9 @@ class Chat extends Component {
                                             <li key={index} className="active">
                                                 <div className="d-flex bd-highlight">
                                                     <div className="user_info">
-                                                        <span>{item} <FiberManualRecordIcon
+                                                        <span>{item.name} <FiberManualRecordIcon
                                                             className='online_icon'/></span>
-                                                        <p>{item} is connected</p>
+                                                        <p>{item.name} is connected</p>
                                                     </div>
                                                 </div>
                                             </li>
@@ -181,7 +165,7 @@ class Chat extends Component {
 
                                 </ul>
                             </div>
-                            <div className="card-footer"></div>
+                            <div className="card-footer"> </div>
                         </div>
                     </div>
                     <div className="col-md-8 col-xl-6 chat">
@@ -229,7 +213,7 @@ class Chat extends Component {
                     </div>
                 </div>
 
-                <audio ref={this.myAudio} id='audio' src={audio}></audio>
+                <audio ref={this.myAudio} id='audio' src={audio}> </audio>
 
             </div>
         )

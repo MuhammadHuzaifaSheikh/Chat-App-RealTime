@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from "react-router-dom";
 
 import './join.css';
 
@@ -11,12 +10,10 @@ export default function Join(props) {
         setName(e.target.value)
 
     }
-
     function handleRoom(e) {
         setRoom(e.target.value)
 
     }
-
     function passName() {
 
         if (name!==''&&room!=='') {
